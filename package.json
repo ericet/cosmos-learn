@@ -1,0 +1,22 @@
+{
+  "name": "cosmos-learn",
+  "version": "1.0.0",
+  "description": "",
+  "main": "multiSend.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@cosmjs/crypto": "^0.27.1",
+    "@cosmjs/encoding": "^0.27.1",
+    "@cosmjs/launchpad": "^0.27.1",
+    "@cosmjs/proto-signing": "^0.27.1",
+    "@cosmjs/stargate": "^0.27.1",
+    "@cosmjs/tendermint-rpc": "^0.27.1",
+    "node-fetch": "^3.2.0"
+  }
+}

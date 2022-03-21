@@ -74,10 +74,11 @@ function arrayRemove(arr, value) {
 }
 
 let keys = process.env.MNEMONICS.split(',');
-let msg = ['1_c', '2_b', '3_a', '4_d', '5_b', '6_c', '7_c', '8_d', '9_c', '10_a', '11_b', '12_c', '13_c', '14_a', '15_a', '16_b', '17_a', '18_d'];
-const msg2 = ['1_c', '2_b', '3_a', '4_d', '5_b', '6_c', '7_c', '8_d', '9_c', '10_a', '11_b', '12_c', '13_c', '14_a', '15_a', '16_b', '17_a', '18_d'];
+
 
 for (let key of keys) {
+    let msg = ['1_c', '2_b', '3_a', '4_d', '5_b', '6_c', '7_c', '8_d', '9_c', '10_a', '11_b', '12_c', '13_c', '14_a', '15_a', '16_b', '17_a', '18_d'];
+    const msg2 = ['1_c', '2_b', '3_a', '4_d', '5_b', '6_c', '7_c', '8_d', '9_c', '10_a', '11_b', '12_c', '13_c', '14_a', '15_a', '16_b', '17_a', '18_d'];
     const signer = await Secp256k1HdWallet.fromMnemonic(key);
     const account = (await signer.getAccounts())[0];
     let completedQuests = await getCompletedQuests(account.address);

@@ -31,16 +31,16 @@ function getSignature(signer, address, msg) {
         resolve(res.signature.signature)
     })
 }
-function hasCompleted(address) {
+function getCompletedQuests(address) {
     return new Promise(async (resolve) => {
         axios.get('https://cosmos-stakedrop.assetmantle.one/qna/' + address).then(res => {
             if (res.data.success) {
-                resolve(true)
+                resolve(res.data.qaData)
             } else {
-                resolve(false)
+                resolve([])
             }
         }).catch(err => {
-            resolve(false);
+            resolve([]);
         })
     })
 }
@@ -66,16 +66,34 @@ function completeQuiz(address, signature, msg, publicKey) {
         })
     })
 }
+function arrayRemove(arr, value) {
+
+    return arr.filter(function (ele) {
+        return ele != value;
+    });
+}
 
 let keys = process.env.MNEMONICS.split(',');
-const msg = '1_c,2_b,3_a';
+let msg = ['1_c', '2_b', '3_a', '4_d', '5_b', '6_c', '7_c', '8_d', '9_c', '10_a', '11_b', '12_c', '13_c', '14_a', '15_a', '16_b', '17_a', '18_d'];
+const msg2 = ['1_c', '2_b', '3_a', '4_d', '5_b', '6_c', '7_c', '8_d', '9_c', '10_a', '11_b', '12_c', '13_c', '14_a', '15_a', '16_b', '17_a', '18_d'];
+
 for (let key of keys) {
     const signer = await Secp256k1HdWallet.fromMnemonic(key);
     const account = (await signer.getAccounts())[0];
-    let completed = await hasCompleted(account.address);
-    if (!completed) {
-        let signature = await getSignature(signer, account.address, msg);
+    let completedQuests = await getCompletedQuests(account.address);
+    for (let quest of completedQuests) {
+        for (let ans of msg2) {
+            if (ans.split("_")[0] == "" + quest.QId) {
+                msg = arrayRemove(msg, ans);
+            }
+        }
+    }
+    let answers = msg.join();
+    if (msg.length > 0) {
+        let signature = await getSignature(signer, account.address, answers);
         console.log(`${account.address} is completing the quiz...`)
-        await completeQuiz(account.address, signature, msg, account.pubkey);
+        await completeQuiz(account.address, signature, answers, account.pubkey);
+    }else{
+        console.log(`${account.address} completed all the quests so far. `);
     }
 }

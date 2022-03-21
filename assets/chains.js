@@ -66,5 +66,16 @@ export const chainMap = {
         gas:160000,
         prefix:"chihuahua",
         claim_min:100
+    },
+    "likecoin-mainnet-2":{
+        name:'likecoin',
+        rpc:'https://mainnet-node.like.co/rpc/',
+        symbol:'LIKE',
+        denom: "nanolike",
+        exponent: 9,
+        min_tx_fee: "8000",
+        gas:160000,
+        prefix:"cosmos",
+        claim_min:100
     }
 }

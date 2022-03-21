@@ -52,13 +52,12 @@ async function voteProposal(client, chain, proposalId, address, option) {
         amount: coins(0, chain.denom),
         gas: "" + chain.gas,
     };
-    console.log(`${address} is ready to vote on proposal #${proposalId}`);
+    console.log(`${address} is ready to vote on ${chain.name} proposal #${proposalId}`);
     let result = await client.signAndBroadcast(address, ops, fee, '');
-    console.log(result)
     if (result.code == 0) {
-        console.log(`${address} voted proposal #${proposalId}`);
+        console.log(`${address} voted ${chain.name} proposal #${proposalId}`);
     } else {
-        console.log(`${address} failed to vote on proposal #${proposalId}`);
+        console.log(`${address} failed to vote on ${chain.name} proposal #${proposalId}`);
     }
 
 }

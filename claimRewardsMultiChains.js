@@ -65,7 +65,7 @@ async function start(mnemonic, chain) {
         }
         for (let total of delegationRewards.total) {
             if (total.denom == chain.denom) {
-                totalRewards += Number(total.amount) / 1e24;
+                totalRewards += Number(total.amount) / (1e18*Math.pow(10,chain.exponent));
             }
         }
     }

@@ -6,8 +6,9 @@ export const chainMap = {
         denom: "uatom",
         exponent: 6,
         min_tx_fee: "800",
-        gas:80000,
-        prefix:"cosmos"
+        gas:120000,
+        prefix:"cosmos",
+        claim_min:0.1
     },
     "osmosis-1":{
         name:'osmosis',
@@ -16,8 +17,9 @@ export const chainMap = {
         denom: "uosmo",
         exponent: 6,
         min_tx_fee: "800",
-        gas:140000,
-        prefix:"osmo"
+        gas:200000,
+        prefix:"osmo",
+        claim_min:0.1
     },
     "juno-1":{
         name:'juno',
@@ -26,8 +28,9 @@ export const chainMap = {
         denom: "ujuno",
         exponent: 6,
         min_tx_fee: "3000",
-        gas:80000,
-        prefix:"juno"
+        gas:120000,
+        prefix:"juno",
+        claim_min:0.1
     },
     "akashnet-2":{
         name:'akash-network',
@@ -37,7 +40,8 @@ export const chainMap = {
         exponent: 6,
         min_tx_fee: "8000",
         gas:120000,
-        prefix:"akash"
+        prefix:"akash",
+        claim_min:1
 
     },
     "stargaze-1":{
@@ -48,7 +52,8 @@ export const chainMap = {
         exponent: 6,
         min_tx_fee: "800",
         gas:800000,
-        prefix:"stars"
+        prefix:"stars",
+        claim_min:1
 
     },
     "chihuahua-1":{
@@ -57,9 +62,9 @@ export const chainMap = {
         symbol:'HUAHUA',
         denom: "uhuahua",
         exponent: 6,
-        min_tx_fee: "5000",
-        gas:80000,
-        prefix:"chihuahua"
-
+        min_tx_fee: "8000",
+        gas:160000,
+        prefix:"chihuahua",
+        claim_min:100
     }
 }

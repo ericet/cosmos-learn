@@ -8,7 +8,8 @@ export const chainMap = {
         min_tx_fee: "800",
         gas:120000,
         prefix:"cosmos",
-        claim_min:0.1
+        claim_min:0.1,
+        collect_min:0.1
     },
     "osmosis-1":{
         name:'osmosis',
@@ -19,7 +20,8 @@ export const chainMap = {
         min_tx_fee: "800",
         gas:200000,
         prefix:"osmo",
-        claim_min:0.1
+        claim_min:0.1,
+        collect_min:0.1
     },
     "juno-1":{
         name:'juno',
@@ -30,7 +32,8 @@ export const chainMap = {
         min_tx_fee: "3000",
         gas:120000,
         prefix:"juno",
-        claim_min:0.1
+        claim_min:0.1,
+        collect_min:0.1
     },
     "akashnet-2":{
         name:'akash-network',
@@ -41,7 +44,8 @@ export const chainMap = {
         min_tx_fee: "8000",
         gas:120000,
         prefix:"akash",
-        claim_min:1
+        claim_min:1,
+        collect_min:1
 
     },
     "stargaze-1":{
@@ -53,7 +57,8 @@ export const chainMap = {
         min_tx_fee: "800",
         gas:800000,
         prefix:"stars",
-        claim_min:1
+        claim_min:1,
+        collect_min:100
 
     },
     "chihuahua-1":{
@@ -65,7 +70,8 @@ export const chainMap = {
         min_tx_fee: "8000",
         gas:160000,
         prefix:"chihuahua",
-        claim_min:100
+        claim_min:100,
+        collect_min:100
     },
     "likecoin-mainnet-2":{
         name:'likecoin',
@@ -76,6 +82,7 @@ export const chainMap = {
         min_tx_fee: "8000",
         gas:160000,
         prefix:"cosmos",
-        claim_min:100
+        claim_min:100,
+        collect_min:100
     }
 }

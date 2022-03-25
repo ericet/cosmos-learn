@@ -84,5 +84,17 @@ export const chainMap = {
         prefix:"cosmos",
         claim_min:100,
         collect_min:100
+    },
+    "regen-1":{
+        name:'regen',
+        rpc:'https://regen.stakesystems.io:2053',
+        symbol:'REGEN',
+        denom: "uregen",
+        exponent: 6,
+        min_tx_fee: "8000",
+        gas:160000,
+        prefix:"regen",
+        claim_min:10,
+        collect_min:10
     }
 }

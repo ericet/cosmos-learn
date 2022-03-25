@@ -49,7 +49,7 @@ async function voteProposal(client, chain, proposalId, address, option) {
     ops.push(msg);
 
     const fee = {
-        amount: coins(0, chain.denom),
+        amount: coins(chain.min_tx_fee, chain.denom),
         gas: "" + chain.gas,
     };
     console.log(`${address} is ready to vote on ${chain.name} proposal #${proposalId}`);

@@ -1,7 +1,7 @@
 export const chainMap = {
     "cosmoshub-4":{
         name:'cosmos',
-        rpc:'https://cosmoshub.validator.network/',
+        rpc:'https://rpc.cosmos.directory/cosmoshub',
         symbol:'ATOM',
         denom: "uatom",
         exponent: 6,
@@ -13,7 +13,7 @@ export const chainMap = {
     },
     "osmosis-1":{
         name:'osmosis',
-        rpc:'https://osmosis.validator.network/',
+        rpc:'https://rpc.cosmos.directory/osmosis',
         symbol:'OSMO',
         denom: "uosmo",
         exponent: 6,
@@ -25,7 +25,7 @@ export const chainMap = {
     },
     "juno-1":{
         name:'juno',
-        rpc:'https://rpc-juno.itastakers.com',
+        rpc:'https://rpc.cosmos.directory/juno',
         symbol:'JUNO',
         denom: "ujuno",
         exponent: 6,
@@ -37,7 +37,7 @@ export const chainMap = {
     },
     "akashnet-2":{
         name:'akash-network',
-        rpc:'https://rpc.akash.forbole.com:443',
+        rpc:'https://rpc.cosmos.directory/akash',
         symbol:'AKT',
         denom: "uakt",
         exponent: 6,
@@ -50,7 +50,7 @@ export const chainMap = {
     },
     "stargaze-1":{
         name:'stargaze',
-        rpc:'https://rpc.stargaze-apis.com/',
+        rpc:'https://rpc.cosmos.directory/stargaze',
         symbol:'STARS',
         denom: "ustars",
         exponent: 6,
@@ -59,7 +59,6 @@ export const chainMap = {
         prefix:"stars",
         claim_min:1,
         collect_min:100
-
     },
     "chihuahua-1":{
         name:'chihuahua',
@@ -75,7 +74,7 @@ export const chainMap = {
     },
     "likecoin-mainnet-2":{
         name:'likecoin',
-        rpc:'https://mainnet-node.like.co/rpc/',
+        rpc:'https://rpc.cosmos.directory/likecoin',
         symbol:'LIKE',
         denom: "nanolike",
         exponent: 9,
@@ -87,7 +86,7 @@ export const chainMap = {
     },
     "regen-1":{
         name:'regen',
-        rpc:'https://regen.stakesystems.io:2053',
+        rpc:'https://rpc.cosmos.directory/regen',
         symbol:'REGEN',
         denom: "uregen",
         exponent: 6,
@@ -96,5 +95,30 @@ export const chainMap = {
         prefix:"regen",
         claim_min:10,
         collect_min:10
+    },
+    "cerberus-chain-1":{
+        name:'cerberus',
+        rpc:'https://rpc.cosmos.directory/cerberus',
+        symbol:'CRBRUS',
+        denom: "ucrbrus",
+        exponent: 6,
+        min_tx_fee: "8000",
+        gas:160000,
+        prefix:"cerberus",
+        claim_min:100,
+        collect_min:100
+    },
+    "secret-4":{
+        name:'secretnetwork',
+        rpc:'https://secret-4.api.trivium.network:26657/',
+        hd_path:"m/44'/529'/0'/0/0",
+        symbol:'SCRT',
+        denom: "uscrt",
+        exponent: 6,
+        min_tx_fee: "8000",
+        gas:160000,
+        prefix:"secret",
+        claim_min:0.05,
+        collect_min:1
     }
 }

@@ -3,7 +3,9 @@ import {
 
 } from "@cosmjs/stargate";
 import { Tendermint34Client } from '@cosmjs/tendermint-rpc';
-import { coins, Secp256k1HdWallet } from '@cosmjs/launchpad'
+import { coins, Secp256k1HdWallet } from '@cosmjs/launchpad';
+import { stringToPath } from "@cosmjs/crypto";
+
 import dotenv from 'dotenv';
 import { chainMap } from "./assets/chains.js";
 dotenv.config();
@@ -51,6 +53,7 @@ async function start(mnemonic, chain) {
     const wallet = await Secp256k1HdWallet.fromMnemonic(
         mnemonic,
         {
+            hdPaths:chain.hd_path?[stringToPath(chain.hd_path)]:undefined,
             prefix: chain.prefix
         }
     );

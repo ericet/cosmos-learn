@@ -15,7 +15,9 @@ const VOTE_OPTION_YES = 1; //YES
 const VOTE_OPTION_ABSTAIN = 2;//abstain
 const VOTE_OPTION_NO = 3;//NO
 const VOTE_OPTION_NO_WITH_VETO = 4;//No with veto
-
+//0:low fee
+//1:low fee or no fee
+const MODE=1;
 async function getQueryClient(rpcEndpoint) {
     const tendermint34Client = await Tendermint34Client.connect(rpcEndpoint);
     const queryClient = QueryClient.withExtensions(
@@ -39,7 +41,7 @@ async function transfer(client, chain, from, recipient, amount) {
     };
     ops.push(msg);
     const fee = {
-        amount: coins(chain.min_tx_fee, chain.denom),
+        amount: coins(chain.min_tx_fee[MODE], chain.denom),
         gas: "" + chain.gas,
     };
     let result = await client.signAndBroadcast(from, ops, fee, '');

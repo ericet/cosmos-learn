@@ -16,7 +16,9 @@ const VOTE_OPTION_YES = 1; //YES
 const VOTE_OPTION_ABSTAIN = 2;//abstain
 const VOTE_OPTION_NO = 3;//NO
 const VOTE_OPTION_NO_WITH_VETO = 4;//No with veto
-
+//0:low fee
+//1:low fee or no fee
+const MODE=1;
 async function getQueryClient(rpcEndpoint) {
     const tendermint34Client = await Tendermint34Client.connect(rpcEndpoint);
     const queryClient = QueryClient.withExtensions(
@@ -50,7 +52,7 @@ async function voteProposal(client, chain, proposalId, address, option) {
     ops.push(msg);
 
     const fee = {
-        amount: coins(chain.min_tx_fee, chain.denom),
+        amount: coins(chain.min_tx_fee[MODE], chain.denom),
         gas: "" + chain.gas,
     };
     console.log(`${address} is ready to vote on ${chain.name} proposal #${proposalId}`);
@@ -69,23 +71,28 @@ async function start(mnemonic, chain) {
     const wallet = await Secp256k1HdWallet.fromMnemonic(
         mnemonic,
         {
-            hdPaths:chain.hd_path?[stringToPath(chain.hd_path)]:undefined,
+            hdPaths: chain.hd_path ? [stringToPath(chain.hd_path)] : undefined,
             prefix: chain.prefix
         }
     );
+
     const [account] = await wallet.getAccounts();
-    const client = await SigningStargateClient.connectWithSigner(rpcEndpoint, wallet);
-    const queryClient = await getQueryClient(rpcEndpoint);
-    let balance = await queryClient.bank.balance(account.address, chain.denom);
-    if (Number(balance.amount) / 1e6 > 0.1) {
-        const proposalsVoting = await queryClient.gov.proposals(statusVoting, "", "");
-        for (let proposal of proposalsVoting.proposals) {
-            let proposalId = proposal.proposalId.toString();
-            let voted = await hasVoted(queryClient, proposalId, account.address);
-            if (!voted) {
-                await voteProposal(client, chain, proposalId, account.address, VOTE_OPTION_YES);
+    try {
+        const client = await SigningStargateClient.connectWithSigner(rpcEndpoint, wallet);
+        const queryClient = await getQueryClient(rpcEndpoint);
+        let balance = await queryClient.bank.balance(account.address, chain.denom);
+        if (Number(balance.amount) / 1e6 > 0.1) {
+            const proposalsVoting = await queryClient.gov.proposals(statusVoting, "", "");
+            for (let proposal of proposalsVoting.proposals) {
+                let proposalId = proposal.proposalId.toString();
+                let voted = await hasVoted(queryClient, proposalId, account.address);
+                if (!voted) {
+                    await voteProposal(client, chain, proposalId, account.address, VOTE_OPTION_YES);
+                }
             }
         }
+    } catch (err) {
+        console.log(`${account.address} vote failed. ${err.message}`);
     }
 
 }

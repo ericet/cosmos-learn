@@ -66,7 +66,7 @@ export const chainMap = {
         symbol:'HUAHUA',
         denom: "uhuahua",
         exponent: 6,
-        min_tx_fee: ["8000","0"],
+        min_tx_fee: ["8000","8000"],
         gas:160000,
         prefix:"chihuahua",
         claim_min:100,
@@ -81,8 +81,8 @@ export const chainMap = {
         min_tx_fee: ["0","0"],
         gas:160000,
         prefix:"cosmos",
-        claim_min:0.1,
-        collect_min:100
+        claim_min:10,
+        collect_min:10
     },
     "regen-1":{
         name:'regen',

@@ -6,7 +6,7 @@ export const chainMap = {
         denom: "uatom",
         exponent: 6,
         min_tx_fee: ["312","0"],
-        gas:120000,
+        gas:200000,
         prefix:"cosmos",
         claim_min:0.1,
         collect_min:0.1
@@ -118,6 +118,21 @@ export const chainMap = {
         min_tx_fee: ["4000","4000"],
         gas:160000,
         prefix:"secret",
+        claim_min:0.5,
+        collect_min:1
+    },
+    "columbus-5":{
+        chain_id:'columbus-5',
+        name:'terra',
+        rpc:'http://public-node.terra.dev:26657',
+        rest:'https://lcd.terra.dev',
+        hd_path:"m/44'/330'/0'/0/0",
+        symbol:'LUNA',
+        denom: "uluna",
+        exponent: 6,
+        min_tx_fee: ["4000","2000"],
+        gas:160000,
+        prefix:"terra",
         claim_min:0.5,
         collect_min:1
     }

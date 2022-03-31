@@ -5,13 +5,14 @@ import {
 import { Tendermint34Client } from '@cosmjs/tendermint-rpc';
 import { coins, Secp256k1HdWallet } from '@cosmjs/launchpad';
 import { stringToPath } from "@cosmjs/crypto";
+import { LCDClient, MnemonicKey, MsgWithdrawDelegatorReward, Fee } from '@terra-money/terra.js';
 
 import dotenv from 'dotenv';
 import { chainMap } from "./assets/chains.js";
 dotenv.config();
 //0:low fee
 //1:low fee or no fee
-const MODE=1;
+const MODE = 1;
 async function getQueryClient(rpcEndpoint) {
     const tendermint34Client = await Tendermint34Client.connect(rpcEndpoint);
     const queryClient = QueryClient.withExtensions(
@@ -47,6 +48,27 @@ async function withdrawRewards(client, chain, address, validators, totalReward) 
 
 }
 
+async function withdrawRewardsTerra(terra, wallet, chain, address, validators, totalReward) {
+    const msgs = validators.map((addr) => new MsgWithdrawDelegatorReward(address, addr));
+    let minFee = chain.min_tx_fee[MODE];
+    const fee = new Fee(chain.gas, { uluna: minFee });
+    console.log(`${address} is ready to claim rewards...`);
+    wallet.createAndSignTx({
+        msgs: msgs,
+        fee: fee,
+    }).then(tx => terra.tx.broadcast(tx))
+        .then(result => {
+            if (result.code > 0) {
+                console.log(`${address} failed to claim ${totalReward} ${chain.symbol}. ${result.raw_log}`);
+            } else {
+                console.log(`${address} claimed ${totalReward} ${chain.symbol}. Tx Hash: ${result.txhash}`);
+            }
+
+        }).catch(err => {
+            console.log(`${address} failed to claim ${totalReward} ${chain.symbol}. ${err}`);
+        });
+}
+
 
 
 
@@ -77,7 +99,19 @@ async function start(mnemonic, chain) {
         }
         if (totalRewards > chain.claim_min && validators.length > 0) {
             const client = await SigningStargateClient.connectWithSigner(rpcEndpoint, wallet);
-            await withdrawRewards(client, chain, account.address, validators, totalRewards);
+            if (chain.name == "terra") {
+                const terra = new LCDClient({
+                    URL: chain.rest,
+                    chainID: chain.chain_id,
+                });
+                const mk = new MnemonicKey({
+                    mnemonic: mnemonic
+                });
+                const wallet = terra.wallet(mk);
+                await withdrawRewardsTerra(terra, wallet, chain, account.address, validators, totalRewards);
+            } else {
+                await withdrawRewards(client, chain, account.address, validators, totalRewards);
+            }
         }
     } catch (err) {
         console.log(`${account.address} claimed failed. ${err.message}`);

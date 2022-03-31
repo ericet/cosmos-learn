@@ -2,6 +2,8 @@ import {
     QueryClient, setupGovExtension, setupBankExtension, SigningStargateClient
 
 } from "@cosmjs/stargate";
+import { LCDClient, MnemonicKey, MsgVote,Fee } from '@terra-money/terra.js';
+
 import { Tendermint34Client } from '@cosmjs/tendermint-rpc';
 import { coins, Secp256k1HdWallet } from '@cosmjs/launchpad'
 import { stringToPath } from "@cosmjs/crypto";
@@ -18,7 +20,7 @@ const VOTE_OPTION_NO = 3;//NO
 const VOTE_OPTION_NO_WITH_VETO = 4;//No with veto
 //0:low fee
 //1:low fee or no fee
-const MODE=1;
+const MODE = 1;
 async function getQueryClient(rpcEndpoint) {
     const tendermint34Client = await Tendermint34Client.connect(rpcEndpoint);
     const queryClient = QueryClient.withExtensions(
@@ -65,6 +67,25 @@ async function voteProposal(client, chain, proposalId, address, option) {
 
 }
 
+//For terra only
+async function voteProposalTerra(terra, wallet, chain, proposalId, address, option) {
+    const vote = new MsgVote(proposalId, address, option);
+    let minFee = chain.min_tx_fee[MODE];
+    const fee = new Fee(chain.gas,{uluna:minFee})
+    console.log(`${address} is ready to vote on ${chain.name} proposal #${proposalId}`);
+    wallet.createAndSignTx({
+        msgs: [vote],
+        fee:fee,
+        memo: ''
+    }).then(tx => terra.tx.broadcast(tx))
+        .then(result => {
+            console.log(`${address} voted ${chain.name} proposal #${proposalId}`);
+        }).catch(err => {
+            console.log(`${address} failed to vote on ${chain.name} proposal #${proposalId}`);
+        });
+
+}
+
 
 async function start(mnemonic, chain) {
     const rpcEndpoint = chain.rpc;
@@ -87,7 +108,20 @@ async function start(mnemonic, chain) {
                 let proposalId = proposal.proposalId.toString();
                 let voted = await hasVoted(queryClient, proposalId, account.address);
                 if (!voted) {
-                    await voteProposal(client, chain, proposalId, account.address, VOTE_OPTION_YES);
+                    if (chain.name == "terra") {
+                        const terra = new LCDClient({
+                            URL: chain.rest,
+                            chainID: chain.chain_id,
+                        });
+                        const mk = new MnemonicKey({
+                            mnemonic: mnemonic
+                        });
+                        const wallet = terra.wallet(mk);
+                        await voteProposalTerra(terra, wallet, chain, proposalId, account.address, VOTE_OPTION_YES);
+
+                    } else {
+                        await voteProposal(client, chain, proposalId, account.address, VOTE_OPTION_YES);
+                    }
                 }
             }
         }

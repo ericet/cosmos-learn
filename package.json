@@ -19,6 +19,7 @@
     "@cosmjs/stargate": "^0.27.1",
     "@cosmjs/tendermint-rpc": "^0.27.1",
     "@tendermint/amino-js": "^0.6.2",
+    "@terra-money/terra.js": "^3.0.9",
     "axios": "^0.26.1",
     "dotenv": "^16.0.0",
     "node-fetch": "^3.2.3"

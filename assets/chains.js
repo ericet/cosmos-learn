@@ -120,5 +120,20 @@ export const chainMap = {
         prefix:"secret",
         claim_min:0.5,
         collect_min:1
+    },
+    "columbus-5":{
+        chain_id:'columbus-5',
+        name:'terra',
+        rpc:'http://public-node.terra.dev:26657',
+        rest:'https://lcd.terra.dev',
+        hd_path:"m/44'/330'/0'/0/0",
+        symbol:'LUNA',
+        denom: "uluna",
+        exponent: 6,
+        min_tx_fee: ["4000","2000"],
+        gas:1000000,
+        prefix:"terra",
+        claim_min:0.05,
+        collect_min:1
     }
 }

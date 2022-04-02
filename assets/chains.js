@@ -6,7 +6,7 @@ export const chainMap = {
         denom: "uatom",
         exponent: 6,
         min_tx_fee: ["312","0"],
-        gas:120000,
+        gas:200000,
         prefix:"cosmos",
         claim_min:0.1,
         collect_min:0.1
@@ -131,9 +131,9 @@ export const chainMap = {
         denom: "uluna",
         exponent: 6,
         min_tx_fee: ["4000","2000"],
-        gas:1000000,
+        gas:160000,
         prefix:"terra",
-        claim_min:0.05,
+        claim_min:0.5,
         collect_min:1
     }
 }

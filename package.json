@@ -21,6 +21,7 @@
     "@tendermint/amino-js": "^0.6.2",
     "@terra-money/terra.js": "^3.0.9",
     "axios": "^0.26.1",
+    "bip39": "^3.0.4",
     "dotenv": "^16.0.0",
     "node-fetch": "^3.2.3"
   }

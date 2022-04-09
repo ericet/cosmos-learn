@@ -2,6 +2,7 @@ export const chainMap = {
     "cosmoshub-4":{
         name:'cosmos',
         rpc:'https://rpc.cosmos.directory/cosmoshub',
+        rest:'https://lcd-cosmos.cosmostation.io',
         symbol:'ATOM',
         denom: "uatom",
         exponent: 6,
@@ -14,6 +15,7 @@ export const chainMap = {
     "osmosis-1":{
         name:'osmosis',
         rpc:'https://rpc.cosmos.directory/osmosis',
+        rest:'https://lcd-osmosis.blockapsis.com',
         symbol:'OSMO',
         denom: "uosmo",
         exponent: 6,
@@ -25,7 +27,8 @@ export const chainMap = {
     },
     "juno-1":{
         name:'juno',
-        rpc:'https://rpc.cosmos.directory/juno',
+        rpc:'https://rpc-juno.ecostake.com',
+        rest:'https://lcd-juno.itastakers.com',
         symbol:'JUNO',
         denom: "ujuno",
         exponent: 6,

@@ -24,6 +24,8 @@ Run any script:
 
 If you find this script is useful to you, donation will be appreciated: 0x434DCffCF7dABd48B284860C27ebd184C91341F5
 
+## Use the scripts at your own risk
+
 ---
 ## 前提
 Windows:
@@ -53,3 +55,5 @@ Ubuntu:
 
 微信:
 ![b74e66a47e67b5b469bf896889f436d](https://user-images.githubusercontent.com/9066755/161464878-27fd65c0-ecc6-4e77-ae50-0cd166a07bac.jpg)
+
+## 脚本需要用到私钥，风险自负

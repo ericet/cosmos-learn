@@ -1,35 +1,34 @@
 import {
-    QueryClient, setupGovExtension, setupBankExtension, SigningStargateClient
-
+    QueryClient, setupDistributionExtension, setupBankExtension, setupStakingExtension, setupTxExtension, setupGovExtension, SigningStargateClient, calculateFee
 } from "@cosmjs/stargate";
+import {
+    PrivateKey,
+    InjectiveDirectEthSecp256k1Wallet
+} from "@injectivelabs/sdk-ts"
 import { Tendermint34Client } from '@cosmjs/tendermint-rpc';
-import { coins, Secp256k1HdWallet } from '@cosmjs/launchpad'
-import dotenv from 'dotenv';
-import { chainMap } from "./assets/chains.js";
-dotenv.config();
+import fs from "fs";
+import EthermintSigningClient from "./utils/EthermintSigningClient.js";
+import { validateMnemonic } from 'bip39';
+import { Secp256k1HdWallet } from '@cosmjs/launchpad';
 
-const statusVoting = 2; //Voting Period
+const loadJSON = (path) => JSON.parse(fs.readFileSync(new URL(path, import.meta.url)));
+const chainsMap = loadJSON('./assets/chains.json');
 
-const VOTE_OPTION_UNSPECIFIED = 0; //no-op
-const VOTE_OPTION_YES = 1; //YES
-const VOTE_OPTION_ABSTAIN = 2;//abstain
-const VOTE_OPTION_NO = 3;//NO
-const VOTE_OPTION_NO_WITH_VETO = 4;//No with veto
-//0:low fee
-//1:low fee or no fee
-const MODE=1;
-async function getQueryClient(rpcEndpoint) {
+async function getQueryClient (rpcEndpoint) {
     const tendermint34Client = await Tendermint34Client.connect(rpcEndpoint);
     const queryClient = QueryClient.withExtensions(
         tendermint34Client,
         setupBankExtension,
-        setupGovExtension
+        setupStakingExtension,
+        setupTxExtension,
+        setupGovExtension,
+        setupDistributionExtension
     );
     return queryClient;
 }
 
 
-async function transfer(client, chain, from, recipient, amount) {
+async function transfer (client, chain, from, recipient, amount) {
     let ops = [];
     let msg = {
         typeUrl: "/cosmos.bank.v1beta1.MsgSend",
@@ -40,48 +39,76 @@ async function transfer(client, chain, from, recipient, amount) {
         },
     };
     ops.push(msg);
-    const fee = {
-        amount: coins(chain.min_tx_fee[MODE], chain.denom),
-        gas: "" + chain.gas,
-    };
-    let result = await client.signAndBroadcast(from, ops, fee, '');
-    if (result.code > 0) {
-        console.log("Failed. Please try again. " + result.rawLog);
+    let result;
+    if (chain.slip44 && chain.slip44 === 60) {
+        result = await client.signAndBroadcast(address, ops, '', '');
     } else {
-        console.log(`Transferred ${amount / Math.pow(10, chain.exponent)} ${chain.symbol} to ${recipient}. Tx Hash: ` + result.transactionHash);
+        let calculatedFee = await estimateFee(client, address, ops, chain);
+        result = await client.signAndBroadcast(address, ops, calculatedFee, '');
     }
+    return result;
 
 }
 
-async function start(mnemonic, chain, recipient) {
-    const rpcEndpoint = chain.rpc;
-    const wallet = await Secp256k1HdWallet.fromMnemonic(
-        mnemonic,
-        {
-            prefix: chain.prefix
+
+async function estimateFee (client, address, message, chain) {
+    try {
+        let gasLimit = await client.simulate(address, message, '');
+        let calculatedFee = calculateFee(Math.floor(gasLimit * chain.gasLimitRatio), `${chain.gasPrice}${chain.denom}`);
+        return calculatedFee;
+    } catch (err) {
+        console.log("Error in estimateFee: " + err);
+    }
+}
+async function start (chain, mnemonicOrKey, recipient) {
+    try {
+        const rpcEndpoint = chain.rpc;
+        let wallet, client;
+        let isMnemonic = validateMnemonic(mnemonicOrKey);
+        if (chain.slip44 && chain.slip44 === 60) {
+            if (isMnemonic) {
+                const privateKeyFromMnemonic = PrivateKey.fromMnemonic(mnemonicOrKey)
+                wallet = (await InjectiveDirectEthSecp256k1Wallet.fromKey(
+                    Buffer.from(privateKeyFromMnemonic.toPrivateKeyHex().replace("0x", ""), "hex"), chain.prefix))
+            } else {
+                wallet = (await InjectiveDirectEthSecp256k1Wallet.fromKey(
+                    Buffer.from(mnemonicOrKey, "hex"), chain.prefix));
+
+            }
+            client = new EthermintSigningClient(chain, wallet);
+        } else {
+            wallet = await Secp256k1HdWallet.fromMnemonic(
+                mnemonicOrKey,
+                { prefix: chain.prefix }
+            );
+            client = await SigningStargateClient.connectWithSigner(rpcEndpoint, wallet);
         }
-    );
-    const [account] = await wallet.getAccounts();
-    const client = await SigningStargateClient.connectWithSigner(rpcEndpoint, wallet);
-    const queryClient = await getQueryClient(rpcEndpoint);
-    let balance = await queryClient.bank.balance(account.address, chain.denom);
-    if (Number(balance.amount) / Math.pow(10, chain.exponent) > chain.collect_min && account.address !== recipient) {
-        let transferAmount = balance.amount - chain.collect_min * Math.pow(10, chain.exponent);
-        console.log(`Transferring ${transferAmount / Math.pow(10, chain.exponent)} ${chain.symbol} to ${recipient}`);
-        transfer(client, chain, account.address, recipient, transferAmount);
+        const [account] = await wallet.getAccounts();
+        const queryClient = await getQueryClient(rpcEndpoint);
+        let balances = await queryClient.bank.balance(account.address, chain.denom);
+        console.log(`${account.address} has ${balances.amount / Math.pow(10, chain.exponent)} ${chain.symbol}`);
+        if (balances.amount > 0) {
+            let transferAmount = balances.amount - chain.collectMin * Math.pow(10, chain.exponent);
+            console.log(`Transferring ${transferAmount / Math.pow(10, chain.exponent)} ${chain.symbol} to ${recipient}`);
+            let result = await transfer(client, chain, account.address, recipient);
+            let code = result.code;
+            if (code == 0) {
+                console.log(`${account.address} transferred ${transferAmount / Math.pow(10, chain.exponent)} ${chain.symbol} to ${recipient}: ${result.transactionHash}`)
+            } else {
+                console.log(`${account.address} FAILED to transfer ${transferAmount / Math.pow(10, chain.exponent)} ${chain.symbol} to ${recipient}. Reason: ${result.rawLog}`);
+            }
+        }
+    } catch (err) {
+        console.log(err)
+        console.log("Error in start: " + err);
     }
-
 }
 
-let keys = process.env.MNEMONICS.split(',');
 
-if (process.env.RECIPIENT) {
-    for (let key of keys) {
 
-        start(key, chainMap['cosmoshub-4'], process.env.RECIPIENT);
-    }
+const mnemonicOrKey = 'Put mnemonic or private key here';
+const recipient = ''; //Recipient
+
+for (let chainName in chainsMap) {
+    start(chainsMap[chainName], mnemonicOrKey, recipient, collectMin);
 }
-else {
-    console.log('Please fill in RECIPIENT');
-}
-

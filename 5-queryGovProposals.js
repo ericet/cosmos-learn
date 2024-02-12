@@ -3,6 +3,10 @@ import {
 
 } from "@cosmjs/stargate";
 import { Tendermint34Client } from '@cosmjs/tendermint-rpc';
+import fs from "fs";
+const loadJSON = (path) => JSON.parse(fs.readFileSync(new URL(path, import.meta.url)));
+const chainsMap = loadJSON('./assets/chains.json');
+
 const statusDeposit = 1;
 const statusVoting = 2;
 const statusPassed = 3;
@@ -17,13 +21,8 @@ async function getQueryClient(rpcEndpoint) {
     return queryClient;
 }
 
-
-
-
-
-
-async function start() {
-    const rpcEndpoint = "https://rpc-cosmoshub.blockapsis.com";
+async function start(chain) {
+    const rpcEndpoint = chain.rpc;
     const queryClient = await getQueryClient(rpcEndpoint);
     const proposalsDeposit = await queryClient.gov.proposals(statusDeposit, "", "");
     console.log("Proposals deposit: ", proposalsDeposit);
@@ -35,4 +34,4 @@ async function start() {
     console.log("Proposals rejected: ", proposalsRejected);
 }
 
-start();
+start(chainsMap['cosmos']);

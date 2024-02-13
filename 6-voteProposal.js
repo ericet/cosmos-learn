@@ -38,7 +38,7 @@ function hasVoted (client, proposalId, address) {
 }
 
 
-async function vote (client, address, proposalId, option) {
+async function vote (client, address, proposalId, option,chain) {
     let ops = [];
     ops.push({
         typeUrl: "/cosmos.gov.v1beta1.MsgVote",
@@ -96,7 +96,7 @@ async function start (chain, mnemonicOrKey, proposalId, option) {
         if (balances.amount > 0) {
             let voted = await hasVoted(queryClient, proposalId, account.address);
             if (!voted) {
-                let result = await vote(client, account.address, proposalId, option);
+                let result = await vote(client, account.address, proposalId, option,chain);
                 let code = result.code;
                 if (code == 0) {
                     console.log(`${account.address} has voted the proposal: ${result.transactionHash}`)

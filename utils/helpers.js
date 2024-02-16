@@ -31,7 +31,7 @@ export async function getSigner(chain, mnemonicOrKey) {
         if (isMnemonic) {
             signer = await DirectSecp256k1HdWallet.fromMnemonic(
                 mnemonicOrKey,
-                { prefix: chain.prefix, hdPath: [hdPath] }
+                { prefix: chain.prefix, hdPaths: [hdPath] }
             );
         } else {
             //TODO: doesn't seem to generate correct cosmos address

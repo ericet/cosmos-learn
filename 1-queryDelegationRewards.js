@@ -15,18 +15,12 @@ async function getQueryClient (rpcEndpoint) {
 
 
 async function start (address) {
-    const rpcEndpoint = "https://rpc.cosmos.network";
+    const rpcEndpoint = "https://rpc.cosmos.directory/cosmoshub";
     const queryClient = await getQueryClient(rpcEndpoint);
     let rewards = await queryClient.distribution.delegationTotalRewards(address);
-    let totalRewards = 0;
-    let validators = [];
-    for (let reward of rewards.rewards) {
-        validators.push(reward.validatorAddress);
-        console.log(reward)
-        totalRewards += Number(reward.reward[0].amount) / 1e24;
-    }
-    console.log("Pending rewards: " + totalRewards);
+    let totalRewards = rewards.total[rewards.total.length - 1].amount / Math.pow(10, 24);
+    console.log("Rewards are ready to claim: " + totalRewards);
 
 }
-const address = '';//enter cosmos address
+const address = 'cosmos1sa2m4yka68hvk42u0dmsvfj5uckfjuxa4dwp2m';//enter cosmos address
 start(address);

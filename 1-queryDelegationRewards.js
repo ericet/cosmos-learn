@@ -22,5 +22,5 @@ async function start (address) {
     console.log("Rewards are ready to claim: " + totalRewards);
 
 }
-const address = 'cosmos1sa2m4yka68hvk42u0dmsvfj5uckfjuxa4dwp2m';//enter cosmos address
+const address = '';//enter cosmos address
 start(address);

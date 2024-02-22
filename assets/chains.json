@@ -2,8 +2,8 @@
    "cosmos": {
       "name": "cosmoshub",
       "chainId": "cosmoshub-4",
-      "rpc": "https://cosmos-rpc.onivalidator.com",
-      "rest": "https://api-cosmoshub.mms.team",
+      "rpc": "https://rpc.cosmos.directory/cosmoshub",
+      "rest": "https://rest.cosmos.directory/cosmoshub",
       "symbol": "ATOM",
       "denom": "uatom",
       "exponent": 6,

@@ -29,7 +29,7 @@
    },
    "juno": {
       "name": "juno",
-      "chainId": "osmojunosis-1",
+      "chainId": "juno-1",
       "rpc": "https://juno-rpc.polkachu.com",
       "rest": "https://lcd-juno.itastakers.com",
       "symbol": "JUNO",
@@ -127,7 +127,7 @@
    },
    "celestia": {
       "name": "celestia",
-      "chainId": "celesita",
+      "chainId": "celestia",
       "rpc": "https://rpc.cosmos.directory/celestia",
       "rest": "https://rest.cosmos.directory/celestia",
       "symbol": "TIA",

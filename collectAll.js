@@ -5,6 +5,7 @@ import { Tendermint34Client } from '@cosmjs/tendermint-rpc';
 import fs from "fs";
 import SigningClient from "./utils/SigningClient.js";
 import { getSigner } from "./utils/helpers.js";
+import { coins } from '@cosmjs/launchpad';
 const loadJSON = (path) => JSON.parse(fs.readFileSync(new URL(path, import.meta.url)));
 const chainsMap = loadJSON('./assets/chains.json');
 
@@ -33,7 +34,7 @@ async function transfer(client, chain, from, recipient, amount) {
         },
     };
     ops.push(msg);
-    let result = await client.signAndBroadcast(address, ops, '', '');
+    let result = await client.signAndBroadcast(from, ops, '', '');
     return result;
 }
 
@@ -47,9 +48,9 @@ async function start(chain, mnemonicOrKey, recipient) {
         let balances = await queryClient.bank.balance(account.address, chain.denom);
         console.log(`${account.address} has ${balances.amount / Math.pow(10, chain.exponent)} ${chain.symbol}`);
         if (balances.amount > 0) {
-            let transferAmount = balances.amount - chain.collectMin * Math.pow(10, chain.exponent);
+            let transferAmount = balances.amount - chain.collect_min * Math.pow(10, chain.exponent);
             console.log(`Transferring ${transferAmount / Math.pow(10, chain.exponent)} ${chain.symbol} to ${recipient}`);
-            let result = await transfer(client, chain, account.address, recipient);
+            let result = await transfer(client, chain, account.address, recipient,transferAmount);
             let code = result.code;
             if (code == 0) {
                 console.log(`${account.address} transferred ${transferAmount / Math.pow(10, chain.exponent)} ${chain.symbol} to ${recipient}: ${result.transactionHash}`)
